@@ -30,7 +30,7 @@ def sqlgenerator(zcontext, url):
         sql = "select count(*) from MOCKDATA where ID>=%s AND ID<=%s;" % (n1, n1+n2)
         h = hash(sql)
 
-        print(h)
+        #print(h)
 
         if h % 2 == 0:
             zsock.send_string("E," + sql)
@@ -63,10 +63,13 @@ def requestservice(zcontext, in_url, sqlitegenerator_url, out_url):
     isock = zcontext.socket(zmq.SUB)
     isock.connect(in_url)
     isock.setsockopt(zmq.SUBSCRIBE, b'O')
+
     psock = zcontext.socket(zmq.REQ)
     psock.connect(sqlitegenerator_url)
+
     osock = zcontext.socket(zmq.PUSH)
     osock.connect(out_url)
+
     while True:
         # receive from generator
         val = isock.recv_string()
@@ -102,7 +105,6 @@ def printoutput(zcontext, url):
     while True:
         msg = zsock.recv_string()
         count += 1
-
         queryCount = msg.split()
         total += int(queryCount[-1])
 
